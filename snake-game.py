@@ -1,8 +1,7 @@
 from tkinter import *
 import random
 from functions import *
-
-
+from tkinter import simpledialog, messagebox
 
 HIGH_SCORE = 0
 GAME_WIDTH = 1200
@@ -15,10 +14,9 @@ FOOD_COLOR = "#FF0000"  # "#FF0000" = Röd färg
 BACKGROUND_COLOR = "#000000"  # "000000" = Svart färg
 
 game_started = False
-try_again_button = None  # Declare globally
+try_again_button = None 
 
 class Snake:
-
     def __init__(self):
         self.body_size = BODY_PARTS
         self.coordinates = []
@@ -31,21 +29,14 @@ class Snake:
             square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR, tag="Snake")
             self.squares.append(square)
 
-
 class Food:
-
     def __init__(self):
-
         x = random.randint(0, (GAME_WIDTH / SPACE_SIZE) - 1) * SPACE_SIZE
         y = random.randint(0, (GAME_HEIGHT / SPACE_SIZE) - 1) * SPACE_SIZE
-
         self.coordinates = [x, y]
-
         canvas.create_oval(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=FOOD_COLOR, tag="food")
 
-
 def next_turn(snake, food):
-
     x, y = snake.coordinates[0]
 
     if direction == "up":
@@ -60,32 +51,23 @@ def next_turn(snake, food):
     snake.coordinates.insert(0, (x, y))
 
     square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR)
-
     snake.squares.insert(0, square)
 
     if x == food.coordinates[0] and y == food.coordinates[1]:
         global score
-
         score += 1
-
         label.config(text="Score:{}".format(score))
-
         canvas.delete("food")
-
         food = Food()
     else:
         del snake.coordinates[-1]
-
         canvas.delete(snake.squares[-1])
-
         del snake.squares[-1]
 
     if check_collisions(snake):
         game_over()
-
     else:
         window.after(SPEED, next_turn, snake, food)
-
 
 def change_direction(new_direction):
     global direction
@@ -103,7 +85,6 @@ def change_direction(new_direction):
         if direction != "up":
             direction = new_direction
 
-
 def check_collisions(snake):
     x, y = snake.coordinates[0]
 
@@ -116,15 +97,10 @@ def check_collisions(snake):
         if x == body_part[0] and y == body_part[1]:
             print("Game over")
             return True
-    False
-
+    return False
 
 def try_again():
-    global score
-    global snake
-    global food
-    global direction
-    global try_again_button  # Access globally
+    global score, snake, food, direction, try_again_button
 
     canvas.delete("gameover")
     canvas.delete("highscore")
@@ -137,22 +113,14 @@ def try_again():
     food = Food()
     next_turn(snake, food)
 
-    # Destroy the "Try Again" button
     try_again_button.destroy()
 
-
 def game_over():
-    global HIGH_SCORE
-    global try_again_button  # Access globally
+    global HIGH_SCORE, try_again_button
+
     if score > HIGH_SCORE:
         HIGH_SCORE = score
-        add_score_to_database(HIGH_SCORE)
-        
-    
-    
-    
-    
-    
+        add_player_and_score(player_name, HIGH_SCORE)
 
     canvas.delete(ALL)
     canvas.create_text(canvas.winfo_width() / 2, canvas.winfo_height() / 2,
@@ -162,16 +130,21 @@ def game_over():
     try_again_button = Button(window, text="Try Again", command=try_again, font=("consolas", 30))
     try_again_button.pack()
 
-
 def start_game():
-    global game_started
+    global game_started, player_name 
+
+    player_name = simpledialog.askstring("Player Name", "Enter your name:")
+    if not player_name:  
+        messagebox.showerror("Error", "Please enter a name.")
+        return
+
+    add_player_and_score(player_name, 0) 
 
     game_started = True
     play_button.destroy()
     snake = Snake()
     food = Food()
     next_turn(snake, food)
-
 
 window = Tk()
 window.title("Snake Game")

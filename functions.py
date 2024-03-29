@@ -9,30 +9,26 @@ conn_details = {
     "port": '5432'
 } 
 
-def add_score_to_database(highscore):
+def add_player_and_score(player_name, score):
     try:
+       
         conn = psycopg2.connect(**conn_details)
         cur = conn.cursor()
-        cur.execute("INSERT INTO highscore_list (score) VALUES (%s)", (highscore,))
+        cur.execute("SELECT id FROM players WHERE name = %s", (player_name,))
+        player_row = cur.fetchone()
+        if player_row:
+            player_id = player_row[0]
+            cur.execute("UPDATE highscores SET score = %s WHERE player_id = %s AND score < %s", (score, player_id, score))
+        else:
+            cur.execute("INSERT INTO players (name) VALUES (%s)", (player_name,))
+            player_id = cur.fetchone()[0]
+
+            cur.execute("INSERT INTO highscores (player_id, score) VALUES (%s, %s)", (player_id, score))
+
         conn.commit()
         cur.close()
         conn.close()
         return True
     except psycopg2.Error as e:
-        print("Something went wrong, IDK", e)
-        return False
-
-def check_highest_score(highscore):
-    try:
-        conn = psycopg2.connect(**conn_details)
-        cur = conn.cursor()
-        cur.execute("SELECT MAX(score) FROM highscore_list", (highscore))
-        current_max_score = cur.fetchone()[0]
-        conn.commit
-        cur.close()
-        conn.close()
-        print(current_max_score)
-        return True
-    except psycopg2.Error as e:
-        print("Something went wrong, IDK", e)
+        print("Error:", e)
         return False
