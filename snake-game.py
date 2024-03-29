@@ -4,8 +4,8 @@ from functions import *
 from tkinter import simpledialog, messagebox
 
 HIGH_SCORE = 0
-GAME_WIDTH = 1200
-GAME_HEIGHT = 800
+GAME_WIDTH = 1100
+GAME_HEIGHT = 700
 SPEED = 80
 SPACE_SIZE = 50
 BODY_PARTS = 3
@@ -161,6 +161,9 @@ canvas.pack()
 
 play_button = Button(window, text="Play", command=start_game, font=("consolas", 30))
 play_button.pack()
+
+high_score_list_button = Button(window, text="High scores", command=lambda: show_high_scores(window), font=("consolas", 30))
+high_score_list_button.pack()
 
 window.bind("<Left>", lambda event: change_direction("left"))
 window.bind("<Right>", lambda event: change_direction("right"))
