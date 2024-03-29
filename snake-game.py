@@ -147,12 +147,12 @@ def game_over():
     if score > HIGH_SCORE:
         HIGH_SCORE = score
         add_score_to_database(HIGH_SCORE)
+        
     
     
     
     
-    #current_max_score = check_highest_score(score)
-    #print(current_max_score)
+    
 
     canvas.delete(ALL)
     canvas.create_text(canvas.winfo_width() / 2, canvas.winfo_height() / 2,

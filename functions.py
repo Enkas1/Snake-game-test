@@ -13,13 +13,13 @@ def add_score_to_database(highscore):
     try:
         conn = psycopg2.connect(**conn_details)
         cur = conn.cursor()
-        cur.execute("INSERT INTO highscore_list (score) VALUES (%s)", (highscore))
-        conn.commit
+        cur.execute("INSERT INTO highscore_list (score) VALUES (%s)", (highscore,))
+        conn.commit()
         cur.close()
         conn.close()
         return True
     except psycopg2.Error as e:
-        print("Something went wron, IDK", e)
+        print("Something went wrong, IDK", e)
         return False
 
 def check_highest_score(highscore):
@@ -34,5 +34,5 @@ def check_highest_score(highscore):
         print(current_max_score)
         return True
     except psycopg2.Error as e:
-        print("Something went wron, IDK", e)
+        print("Something went wrong, IDK", e)
         return False
