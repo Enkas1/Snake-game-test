@@ -1,3 +1,3 @@
-Simple snake game
+Simple snake game with postgreSQL database
 
-Adding highscore to database
+Change password on conn_details to your own DB password
